@@ -49,7 +49,7 @@ class ipaDistrubution {
 	/**
     * Bundle identifier which is used to find the proper provision profile.
     */
-	protected $identiefier;
+	protected $identifier;
 	/**
     * Bundle icon name for extracting icon file
     */
@@ -81,7 +81,7 @@ class ipaDistrubution {
 		
 		$this->createManifest($ipa);
 		
-		$this->seekMobileProvision($this->identiefier);
+		$this->seekMobileProvision($this->identifier);
 		
 		$this->getIcon($ipa);
 		
@@ -216,7 +216,7 @@ class ipaDistrubution {
 			$plist = new CFPropertyList('Info.plist');
 			$plistArray = $plist->toArray();
 			//var_dump($plistArray);
-			$this->identiefier = $plistArray['CFBundleIdentifier'];
+			$this->identifier = $plistArray['CFBundleIdentifier'];
 			$this->appname = $plistArray['CFBundleDisplayName'];
 			$this->bundleversion = $plistArray['CFBundleVersion'];
 			$this->icon = ($plistArray['CFBundleIconFile']!=""?$plistArray['CFBundleIconFile']:(count($plistArray['CFBundleIconFile'])>0?$plistArray['CFBundleIconFile'][0]:null));
@@ -288,10 +288,10 @@ class ipaDistrubution {
 	/**
     * Search for the right provision profile in de current folder
     *
-    * @param String $identiefier the bundle identifier for the app
+    * @param String $identifier the bundle identifier for the app
     */
-	function seekMobileProvision ($identiefier) {
-		$wildcard = pathinfo($identiefier);
+	function seekMobileProvision ($identifier) {
+		$wildcard = pathinfo($identifier);
 		
 		$bundels = array();
 		foreach (glob("*.mobileprovision") as $filename) {
@@ -300,7 +300,7 @@ class ipaDistrubution {
 			if ($seek!== false) $bundels[substr(strstr($profile, $wildcard['filename']),0,$seek)] = $filename;
 		}
 		
-		if (array_key_exists($this->identiefier,$bundels)) $this->provisionprofile = $bundels[$this->identiefier];
+		if (array_key_exists($this->identifier,$bundels)) $this->provisionprofile = $bundels[$this->identifier];
 		else if  (array_key_exists($wildcard['filename'].".*",$bundels)) $this->provisionprofile = $bundels[$wildcard['filename'].".*"];
 		else $this->provisionprofile = null;
 	}
